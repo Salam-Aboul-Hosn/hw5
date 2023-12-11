@@ -12,6 +12,15 @@ class RatingWidget extends HTMLElement {
       star.addEventListener('click', () => this.showThankYouMessage());
       this.shadowRoot.appendChild(star);
     }
+    const style = document.createElement('style');
+
+    style.innerHTML = `
+                    .checked {  
+                        color: yellow;
+                    }
+                `;
+
+    this.shadowRoot.appendChild(style);
   }
 
   highlightStars(count) {
@@ -62,3 +71,39 @@ class RatingWidget extends HTMLElement {
 }
 
 customElements.define('rating-widget', RatingWidget);
+
+class WeatherWidget extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
+    <div style="display: flex;">
+                  <p id="forecast" style="padding-right: 5px;"></p>
+                  <p id="temp"></p>
+                  </div>
+                  <div class='column' id='iconic'></div>
+      `;
+  }
+
+  connectedCallback() {
+    this.fetchWeatherData();
+  }
+
+  fetchWeatherData() {
+    fetch('https://api.weather.gov/gridpoints/SGX/54,20/forecast/hourly')
+      .then((response) => response.json())
+      .then((data) => {
+        const weatherData = data.properties.periods[0];
+        console.log(weatherData);
+        this.shadowRoot.getElementById('forecast').innerHTML =
+          weatherData.shortForecast;
+        this.shadowRoot.getElementById(
+          'temp'
+        ).innerHTML = `${weatherData.temperature} ° ${weatherData.temperatureUnit}`;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+}
+customElements.define('weather-widget', WeatherWidget);
