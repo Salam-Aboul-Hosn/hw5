@@ -72,29 +72,45 @@ class RatingWidget extends HTMLElement {
 
 customElements.define('rating-widget', RatingWidget);
 
+// Define a custom web component named WeatherWidget that extends the HTMLElement class.
 class WeatherWidget extends HTMLElement {
+  // Constructor for the WeatherWidget class.
   constructor() {
+    // Call the constructor of the parent class (HTMLElement).
     super();
+
+    // Create a shadow DOM for encapsulation.
     this.attachShadow({ mode: 'open' });
+
+    // Set the inner HTML of the shadow DOM to include HTML elements for displaying weather information.
     this.shadowRoot.innerHTML = `
-    <div style="display: flex;">
-                  <p id="forecast" style="padding-right: 5px;"></p>
-                  <p id="temp"></p>
-                  </div>
-                  <div class='column' id='iconic'></div>
-      `;
+      <div style="display: flex;">
+        <p id="forecast" style="padding-right: 5px;"></p>
+        <p id="temp"></p>
+      </div>
+      <div class='column' id='iconic'></div>
+    `;
   }
 
+  // Lifecycle method called when the element is connected to the DOM.
   connectedCallback() {
+    // Fetch weather data when the element is connected to the DOM.
     this.fetchWeatherData();
   }
 
+  // Method to fetch weather data from the specified API endpoint.
   fetchWeatherData() {
+    // Make a GET request to the National Weather Service API endpoint for hourly forecasts.
     fetch('https://api.weather.gov/gridpoints/SGX/54,20/forecast/hourly')
-      .then((response) => response.json())
+      .then((response) => response.json()) // Parse the JSON response.
       .then((data) => {
+        // Extract the relevant weather data from the API response.
         const weatherData = data.properties.periods[0];
+
+        // Log the retrieved weather data to the console for debugging purposes.
         console.log(weatherData);
+
+        // Update the forecast and temperature elements in the shadow DOM with the retrieved data.
         this.shadowRoot.getElementById('forecast').innerHTML =
           weatherData.shortForecast;
         this.shadowRoot.getElementById(
@@ -102,8 +118,11 @@ class WeatherWidget extends HTMLElement {
         ).innerHTML = `${weatherData.temperature}°${weatherData.temperatureUnit}`;
       })
       .catch((error) => {
+        // Log any errors that occur during the API request.
         console.error(error);
       });
   }
 }
+
+// Define the custom element 'weather-widget' using the WeatherWidget class.
 customElements.define('weather-widget', WeatherWidget);
