@@ -99,7 +99,7 @@ class WeatherWidget extends HTMLElement {
           weatherData.shortForecast;
         this.shadowRoot.getElementById(
           'temp'
-        ).innerHTML = `${weatherData.temperature} ° ${weatherData.temperatureUnit}`;
+        ).innerHTML = `${weatherData.temperature}°${weatherData.temperatureUnit}`;
       })
       .catch((error) => {
         console.error(error);
